@@ -132,19 +132,25 @@ def modify_title(f, vernum, year, name, rm_svn):
 
     in_file = in_file.split(sep)
 
-    for i in in_file:
-        res = re.search('^(\/|\*|\ \*|;).*( |\t)*', i)
-        if not res: 
-            break
+    out_file = ''
+    str_changed = False
 
-        idx = in_file.index(i)
+    for i in in_file:
+        res = re.search('^(\/|\*|\ \*|;).*[ \t]*', i)
+        if not res: 
+            out_file += i + sep
+            continue
+
+        #idx = in_file.index(i)
         if vernum:
             res = re.search('Version:(\s+)([a-zA-Z0-9-\.]+)', i)
             if res:
                 oldver = res.group(0)
-                in_file[idx] = i.replace(oldver, 'Version: ' + vernum, 1)
+                #in_file[idx] = i.replace(oldver, 'Version: ' + vernum, 1)
+                out_file += i.replace(oldver, 'Version: ' + vernum, 1) + sep
+                str_changed = True
 
-        res      = re.search('Copyright[ \t]+\(c\)[ \t]+([0-9- ]+)\,[ \t]+(.+)', i)
+        res = re.search('Copyright[ \t]+\(c\)[ \t]+([0-9- ]+)\,[ \t]+(.+)', i)
         if res:
             years    = res.groups()[0]
             old_name = res.groups()[1]
@@ -156,15 +162,31 @@ def modify_title(f, vernum, year, name, rm_svn):
                 if y != year:
                     newdate = y + '-' + year
                     new_str = i.replace(yres.group(0), newdate, 1)
+                    str_changed = True
 
             if name:
                 new_str = new_str.replace(old_name, name, 1)
+                str_changed = True
 
-            in_file[idx] = new_str
+            if str_changed:
+                out_file += new_str + sep
 
-    out_file = ''
-    for i in in_file:
-        out_file += i + sep
+            #in_file[idx] = new_str
+
+        if rm_svn:
+            res1 = re.search('\$Rev.*\$', i)
+            if res1:
+                print res1.group(0)
+            res2 = re.search('\$Date.*\$', i)
+            if res2:
+                print res2.group(0)
+            if res1 or res2:
+                str_changed = True
+
+        if not str_changed:
+            out_file += i + sep
+
+        str_changed = False
 
     open(f, 'wb').write(out_file[:-len(sep)])
 
