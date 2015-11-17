@@ -70,7 +70,7 @@ def get_dir_list(d, recursive = True):
     dlist = os.listdir(d)
     dirs = []
     for i in dlist:
-        ditem = d + '\\' + i
+        ditem = d + os.sep + i
         if os.path.isdir(ditem):
             dirs.append(ditem)
             if recursive:
@@ -86,7 +86,7 @@ def get_dir_list(d, recursive = True):
 def get_file_list( d, ext ):
     files = []
     for i in ext:
-        fl = glob.glob(d + '\\*.' + i)
+        fl = glob.glob(d + os.sep + '*.' + i)
         files += fl
 
     return files
