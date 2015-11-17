@@ -2,9 +2,9 @@
 #
 #             Source file title modifier
 #
-#                    Version 1.3
+#                    Version 1.4
 #
-#          Copyright (c) 2006-2010, Harry E. Zhurov
+#          Copyright (c) 2006-2015, Harry E. Zhurov
 #
 #
 #
