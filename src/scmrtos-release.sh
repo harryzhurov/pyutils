@@ -38,11 +38,13 @@ cd $RELEASE_NAME
 rm -rf .git*
 rm -rf scmRTOS/.git*
 
-mkdir -p doc/ru
-mkdir -p doc/en
+mkdir -p doc/
 
-cp $DOC_PATH/ru/*.pdf doc/ru
-cp $DOC_PATH/en/*.pdf doc/en
+cp -R $DOC_PATH/pdf/* doc
+
+if [ $? -ne 0 ]; then
+    exit
+fi
 
 cd ..
 
