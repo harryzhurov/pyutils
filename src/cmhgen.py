@@ -142,6 +142,7 @@ s8 =                                                                            
 s9 = \
 '};'                                                                                      + os.linesep +\
 '//------------------------------------------------------------------------------'        + os.linesep +\
+'__attribute__ ((noreturn))'                                                              + os.linesep +\
 'static void default_handler() { for(;;) { } }'                                           + os.linesep +\
 'static void hf_handler()'                                                                + os.linesep +\
 '{'                                                                                       + os.linesep +\
@@ -153,6 +154,20 @@ s9 = \
 '//'                                                                                      + os.linesep +\
 '//   Default exception handlers'                                                         + os.linesep +\
 '//'                                                                                      + os.linesep +\
+'#ifdef NDEBUG'                                                                           + os.linesep +\
+''                                                                                        + os.linesep +\
+'#pragma weak NMI_Handler        = default_handler'                                       + os.linesep +\
+'#pragma weak HardFault_Handler  = default_handler'                                       + os.linesep +\
+'#pragma weak MemManage_Handler  = default_handler'                                       + os.linesep +\
+'#pragma weak BusFault_Handler   = default_handler'                                       + os.linesep +\
+'#pragma weak UsageFault_Handler = default_handler'                                       + os.linesep +\
+'#pragma weak SVC_Handler        = default_handler'                                       + os.linesep +\
+'#pragma weak DebugMon_Handler   = default_handler'                                       + os.linesep +\
+'#pragma weak PendSV_Handler     = default_handler'                                       + os.linesep +\
+'#pragma weak SysTick_Handler    = default_handler'                                       + os.linesep +\
+''                                                                                        + os.linesep +\
+'#else // NDEBUG'                                                                         + os.linesep +\
+''                                                                                        + os.linesep +\
 'WEAK void NMI_Handler        ()  { default_handler(); }'                                 + os.linesep +\
 'WEAK void HardFault_Handler  ()  { hf_handler();      }'                                 + os.linesep +\
 'WEAK void MemManage_Handler  ()  { default_handler(); }'                                 + os.linesep +\
@@ -162,6 +177,8 @@ s9 = \
 'WEAK void DebugMon_Handler   ()  { default_handler(); }'                                 + os.linesep +\
 'WEAK void PendSV_Handler     ()  { default_handler(); }'                                 + os.linesep +\
 'WEAK void SysTick_Handler    ()  { default_handler(); }'                                 + os.linesep +\
+''                                                                                        + os.linesep +\
+'#endif // NDEBUG'                                                                        + os.linesep +\
 ''                                                                                        + os.linesep +\
 '//------------------------------------------------------------------------------'        + os.linesep +\
 '//'                                                                                      + os.linesep +\
@@ -215,9 +232,10 @@ for i in src:
 #
 #   Generate contents
 #
-header = ''
-source = ''
-weaks  = ''
+header  = ''
+source  = ''
+weaks0  = '#ifdef NDEBUG' + os.linesep*2
+weaks1  = os.linesep + '#else // NDEBUG' + os.linesep*2
 
 max_hlen = max(HLengths)
 
@@ -233,19 +251,20 @@ for idx, i in enumerate(Handlers, start=1):
     
     if i[0] != '0':
         header += 'WEAK void ' + i[0] + '();' + os.linesep
-        weaks  += 'WEAK void ' + i[0] + ' '*(max_hlen-len(i[0])) + ' ()  { default_handler(); }' + os.linesep
+        weaks0  += '#pragma weak ' + i[0] + ' '*(max_hlen-len(i[0])) + ' = default_handler' + os.linesep
+        weaks1  += 'WEAK void ' + i[0] + ' '*(max_hlen-len(i[0])) + ' ()  { default_handler(); }' + os.linesep
         
     source += ' '*4 + i[0]  + sep + ' '*(max_hlen-len(i[0])) + ' '*4 + '// ' + i[1] + os.linesep
     
 header += s7
-source += s9 + weaks + s10    
+source += s9 + weaks0 + weaks1 + os.linesep + '#endif // NDEBUG' + os.linesep + s10    
     
 #-----------------------------------------------------
 #
 #   Save results
 #
 dirname = filename.upper()
-if not  os.path.exists(filename):
+if not  os.path.exists(dirname):
     os.mkdir(dirname)
 
 with open( dirname + os.sep + 'exhandler.h', 'wb' ) as hf:
