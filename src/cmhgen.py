@@ -19,7 +19,7 @@ s3 = ' vector table'                                                            
                                                                                           
 s4 = \
 '//*'                                                                                     + os.linesep +\
-'//*      Version 1.0'                                                                    + os.linesep +\
+'//*      Version 1.1'                                                                    + os.linesep +\
 '//*'                                                                                     + os.linesep +\
 '//*      Copyright (c) 2016, emb-lib Project Team'                                       + os.linesep +\
 '//*'                                                                                     + os.linesep +\
@@ -46,7 +46,7 @@ s4 = \
  
 s5 = '//*      '
 
-s6 =                                                                                        os.linesep +\
+s6_1 =                                                                                      os.linesep +\
 '#ifndef EXHANDLER_H'                                                                     + os.linesep +\
 '#define EXHANDLER_H'                                                                     + os.linesep +\
 ''                                                                                        + os.linesep +\
@@ -65,12 +65,13 @@ s6 =                                                                            
 '//   Vector table item. Can be pointer to function or plain address value'               + os.linesep +\
 '//'                                                                                      + os.linesep +\
 'typedef void (*intfun_t)();'                                                             + os.linesep +\
-'typedef union'                                                                           + os.linesep +\
+'typedef struct'                                                                          + os.linesep +\
 '{'                                                                                       + os.linesep +\
-'    intfun_t intfun;'                                                                    + os.linesep +\
-'    void *__ptr;'                                                                        + os.linesep +\
+'    unsigned long *tos;'                                                                 + os.linesep
+
+s6_2 =                                                                                      os.linesep +\
 '}'                                                                                       + os.linesep +\
-'intvec_item_t;'                                                                          + os.linesep +\
+'__vector_table_t;'                                                                       + os.linesep +\
 ''                                                                                        + os.linesep +\
 '//------------------------------------------------------------------------------'        + os.linesep +\
 '//'                                                                                      + os.linesep +\
@@ -109,15 +110,17 @@ s8 =                                                                            
 ''                                                                                        + os.linesep +\
 '//------------------------------------------------------------------------------'        + os.linesep +\
 '__attribute__ ((used))'                                                                  + os.linesep +\
-'__attribute__ ((section(".isr_vector")))                 '                               + os.linesep +\
-'const intvec_item_t __vector_table[] ='                                                  + os.linesep +\
+'__attribute__ ((section(".isr_vector")))'                                                + os.linesep +\
+'const __vector_table_t __vector_table='                                                  + os.linesep +\
 '{'                                                                                       + os.linesep +\
-'    { .__ptr = __top_of_stack },'                                                        + os.linesep +\
+'    __top_of_stack,'                                                                     + os.linesep +\
+'    '                                                                                    + os.linesep +\
+'    {'                                                                                   + os.linesep +\
 '    Reset_Handler,'                                                                      + os.linesep +\
 ''                                                                                        + os.linesep +\
 '    //--------------------------------------------------------------------------'        + os.linesep +\
 '    //'                                                                                  + os.linesep +\
-'    // Cortex-M3 core exceptions '                                                       + os.linesep +\
+'    // Cortex-M core exceptions '                                                        + os.linesep +\
 '    // '                                                                                 + os.linesep +\
 '    NMI_Handler,'                                                                        + os.linesep +\
 '    HardFault_Handler,'                                                                  + os.linesep +\
@@ -237,9 +240,10 @@ source  = ''
 weaks0  = '#ifdef NDEBUG' + os.linesep*2
 weaks1  = os.linesep + '#else // NDEBUG' + os.linesep*2
 
-max_hlen = max(HLengths)
+handler_count = len(Handlers) + 15
+max_hlen      = max(HLengths)
 
-header += s0 + s1 + s5 + filename.upper() + s2 + s4 + s6
+header += s0 + s1 + s5 + filename.upper() + s2 + s4 + s6_1 + '    intfun_t      vectors[' + str(handler_count) +'];' + s6_2
 source += s0 + s1 + s5 + filename.upper() + s3 + s4 + s8 
 
 
@@ -255,6 +259,8 @@ for idx, i in enumerate(Handlers, start=1):
         weaks1  += 'WEAK void ' + i[0] + ' '*(max_hlen-len(i[0])) + ' ()  { default_handler(); }' + os.linesep
         
     source += ' '*4 + i[0]  + sep + ' '*(max_hlen-len(i[0])) + ' '*4 + '// ' + i[1] + os.linesep
+    if sep == ' ':
+        source += ' '*4 + '}' + os.linesep
     
 header += s7
 source += s9 + weaks0 + weaks1 + os.linesep + '#endif // NDEBUG' + os.linesep + s10    
