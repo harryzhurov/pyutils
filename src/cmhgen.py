@@ -111,7 +111,7 @@ s8 =                                                                            
 '//------------------------------------------------------------------------------'        + os.linesep +\
 '__attribute__ ((used))'                                                                  + os.linesep +\
 '__attribute__ ((section(".isr_vector")))'                                                + os.linesep +\
-'const __vector_table_t __vector_table='                                                  + os.linesep +\
+'const __vector_table_t __vector_table ='                                                 + os.linesep +\
 '{'                                                                                       + os.linesep +\
 '    __top_of_stack,'                                                                     + os.linesep +\
 '    '                                                                                    + os.linesep +\
