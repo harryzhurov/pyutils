@@ -1,3 +1,4 @@
+#!/usr/bin/python
 #*******************************************************************************
 #
 #             Source file title modifier
@@ -312,6 +313,7 @@ def main():
         print '                  -y          : touch copyright year'
         print ''
         print '                  --remove-svn-keywords: remove $Rev $ and $Date $ fields'
+        sys.exit(1)
 
 
     tmod(infiles, options)
