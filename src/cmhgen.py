@@ -150,12 +150,14 @@ s9 = \
 '//------------------------------------------------------------------------------'        + os.linesep +\
 '__attribute__ ((noreturn))'                                                              + os.linesep +\
 'static void default_handler() { for(;;) { } }'                                           + os.linesep +\
+'#ifndef NDEBUG'                                                                          + os.linesep +\
 'static void hf_handler()'                                                                + os.linesep +\
 '{'                                                                                       + os.linesep +\
 '    volatile int i = 0;         //  debug variable: set non-zero value to '              + os.linesep +\
 '    while(!i) { }               //  return from handler - this figures out '             + os.linesep +\
 '                                //  an address where HW fault raises'                    + os.linesep +\
 '}'                                                                                       + os.linesep +\
+'#endif // NDEBUG'                                                                        + os.linesep +\
 '//------------------------------------------------------------------------------'        + os.linesep +\
 '//'                                                                                      + os.linesep +\
 '//   Default exception handlers'                                                         + os.linesep +\
