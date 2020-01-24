@@ -19,9 +19,9 @@ s3 = ' vector table'                                                            
                                                                                           
 s4 = \
 '//*'                                                                                     + os.linesep +\
-'//*      Version 1.1'                                                                    + os.linesep +\
+'//*      Version 1.2'                                                                    + os.linesep +\
 '//*'                                                                                     + os.linesep +\
-'//*      Copyright (c) 2016-2018, emb-lib Project Team'                                  + os.linesep +\
+'//*      Copyright (c) 2016-2020, emb-lib Project Team'                                  + os.linesep +\
 '//*'                                                                                     + os.linesep +\
 '//*      This file is part of the arm-none-eabi-startup project.'                        + os.linesep +\
 '//*      Visit https://github.com/emb-lib/arm-none-eabi-startup for new versions.'       + os.linesep +\
@@ -274,7 +274,24 @@ source += s9 + weaks0 + weaks1 + os.linesep + '#endif // NDEBUG' + os.linesep + 
 #
 #   Save results
 #
-dirname = filename.upper()
+dirname = filename.lower()
+
+stm32_proper_name = os.path.join( os.path.dirname(sys.argv[1]), '../stm32-proper-name.txt' )
+
+if os.path.exists(stm32_proper_name):
+    with open( stm32_proper_name, 'rt' ) as stm32_names_f:
+        stm32_names = stm32_names_f.read().splitlines()
+        
+        lowercase_list = [n.lower() for n in stm32_names]
+        if dirname in lowercase_list:
+            idx = lowercase_list.index(dirname)
+            dirname = stm32_names[idx]
+        else:
+            dirname = dirname.upper()
+else:
+    dirname = dirname.upper()
+
+
 if not  os.path.exists(dirname):
     os.mkdir(dirname)
 
