@@ -21,7 +21,7 @@ s4 = \
 '//*'                                                                                     + os.linesep +\
 '//*      Version 1.1'                                                                    + os.linesep +\
 '//*'                                                                                     + os.linesep +\
-'//*      Copyright (c) 2016, emb-lib Project Team'                                       + os.linesep +\
+'//*      Copyright (c) 2016-2018, emb-lib Project Team'                                  + os.linesep +\
 '//*'                                                                                     + os.linesep +\
 '//*      This file is part of the arm-none-eabi-startup project.'                        + os.linesep +\
 '//*      Visit https://github.com/emb-lib/arm-none-eabi-startup for new versions.'       + os.linesep +\
