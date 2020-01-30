@@ -200,8 +200,8 @@ print 'process file: ' + sys.argv[1]
                                                              
 with open( sys.argv[1], 'rb') as f:                                                 
     src = f.readlines()
-                                                                                    
-filename_pattern = '.*startup_(\w+)\.s'
+    
+filename_pattern = '.*startup_(\w+)\.[sS]'
 
 filename = re.match(filename_pattern, sys.argv[1]).groups()[0]
                                                                                         
