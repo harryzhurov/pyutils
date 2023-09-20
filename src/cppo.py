@@ -3,30 +3,20 @@
 import os
 import sys
 import shutil
+from pathlib import Path
 
+idir = Path(sys.argv[1]).absolute()
+odir = Path(sys.argv[2]).absolute()
 
-idir = sys.argv[1]
-odir = sys.argv[2]
+print('copy files from "' + str(idir) + '" to "' + str(odir) + '"')
 
-#tree = os.walk(idir)
+tree = [x for x in Path(idir).rglob('*') if x.is_file()]
+tree.sort()
 
-#for i in tree:
-#    print(i)
-
-olist = []
-
-for subdir, dirs, files in os.walk(idir):
-    for file in files:
-        olist.append( os.path.join(subdir, file) )
-
-olist.sort()
-        
-for i in olist:
-    d = os.path.join(odir, os.path.dirname(i))
-    if not os.path.exists(d):
-        print('create dir: ' + d)
-        os.makedirs(d)
-    dstpath = os.path.join(d, os.path.basename(i))
-    print('copy file: ' + dstpath)
+for i in tree:
+    dstpath = str(i).replace(str(idir), str(odir))
+    print('copy file: ' + str(i) + ' -> ' + dstpath)
+    if not Path(dstpath).parent.exists():
+        Path(dstpath).parent.mkdir(parents=True)
     shutil.copyfile(i, dstpath)
 
